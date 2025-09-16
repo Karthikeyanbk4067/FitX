@@ -1,0 +1,177 @@
+{% extends "_base.html" %}
+{% block title %}FAQ - FITX{% endblock %}
+
+{% block head_styles %}
+<style>
+  .page-hero {
+    min-height: 40vh;
+    display: grid;
+    align-items: center;
+    text-align: center;
+    background: #0b0b0b;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  /* --- NEW & IMPROVED ACCORDION STYLING --- */
+
+  /* The main container for the accordion doesn't need a border */
+  .accordion {
+    border: none;
+  }
+
+  /* Each FAQ item is now a styled "card" */
+  .accordion-item {
+    background-color: var(--paper); /* A slightly lighter dark color for contrast */
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm); /* Softly rounded corners */
+    margin-bottom: 1rem; /* Space between each card */
+    transition: background-color 0.2s ease;
+  }
+  .accordion-item:hover {
+      background-color: #696969; /* Subtle hover effect */
+  }
+
+  /* The clickable question button */
+  .accordion-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: transparent !important;
+    color: var(--ink) !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1.5rem; /* Consistent padding */
+    box-shadow: none !important;
+    text-align: left;
+  }
+  
+  /* Removing the default Bootstrap arrow icon */
+  .accordion-button::after {
+    display: none; 
+  }
+
+  /* Creating our custom '+' icon */
+  .accordion-button .icon::before {
+    content: '+';
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--muted);
+    transition: transform 0.3s ease;
+  }
+
+  /* When the button is active (question is open), animate the '+' into an 'X' */
+  .accordion-button:not(.collapsed) .icon::before {
+    transform: rotate(45deg);
+  }
+  .accordion-button:not(.collapsed) {
+      color: #fff !important; /* Make active question text brighter */
+  }
+
+  /* The answer text panel */
+  .accordion-body {
+    color: var(--muted);
+    padding: 0 1.5rem 1.5rem 1.5rem; /* Clean padding */
+    line-height: 1.8;
+  }
+
+  /* NEW: Style for the "Still have questions?" box */
+  .faq-cta {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background-color: var(--paper);
+  }
+  .faq-cta h4 {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <h1 class="section-title" style="margin-bottom: 0;">FREQUENTLY ASKED QUESTIONS</h1>
+    <p class="eyebrow">ANSWERS TO YOUR QUESTIONS</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 900px; margin-inline: auto;">
+    <div class="accordion" id="faqAccordion">
+
+      <!-- Question 1 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            What is your shipping policy?
+            <span class="icon"></span> <!-- Custom icon holder -->
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            We offer free standard shipping on all domestic orders. Expedited shipping options are available at checkout for an additional fee. Orders are typically processed within 1-2 business days.
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            How can I track my order?
+            <span class="icon"></span> <!-- Custom icon holder -->
+          </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Once your order has shipped, you will receive an email confirmation with a tracking number. You can also log in to your FITX account and view your order status and tracking information on your account page.
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            What is your return policy?
+            <span class="icon"></span> <!-- Custom icon holder -->
+          </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            We offer a 30-day return policy for all unworn items in their original packaging. To initiate a return, please visit our Returns Portal or contact our support team.
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFour">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+            Are all your products authentic?
+            <span class="icon"></span> <!-- Custom icon holder -->
+          </button>
+        </h2>
+        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Absolutely. FITX is an authorized retailer for every brand we carry, including Nike, Adidas, Puma, and New Balance. We guarantee that every product we sell is 100% authentic and sourced directly from the brands.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NEW: Call-to-Action Section -->
+    <div class="faq-cta">
+        <h4>STILL HAVE QUESTIONS?</h4>
+        <p style="color: var(--muted); margin-bottom: 1.5rem;">If you can't find the answer you're looking for, please don't hesitate to reach out to our support team.</p>
+        <a href="{{ url_for('contact_page') }}" class="btn btn-primary">Contact Us</a>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

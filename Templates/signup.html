@@ -1,0 +1,102 @@
+<!-- templates/signup.html (Modern & Responsive) -->
+
+{% extends "_base.html" %}
+
+{% block title %}Create an Account - ALPHA{% endblock %}
+
+{% block head_styles %}
+<style>
+    /* --- SIGN UP PAGE SPECIFIC STYLES --- */
+    body {
+        /* Override dark theme for a clean, light form page */
+        background-color: var(--light-bg, #f8f9fa) !important;
+        color: var(--text-color, #212529) !important;
+    }
+
+    /* Override navbar to be light for this page */
+
+    .signup-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90vh; /* Fill the screen */
+        padding: 2rem 0;
+    }
+
+    .signup-card {
+        width: 100%;
+        max-width: 450px; /* Limit the width on larger screens */
+        background-color: #ffffff;
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 1rem; /* Softer, modern corners */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .card-title {
+        font-weight: 700;
+    }
+
+    .form-control {
+        padding: 0.85rem 1rem;
+        border-radius: 8px;
+    }
+    .form-control:focus {
+        border-color: var(--primary-purple, #000000);
+        box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2);
+    }
+
+    .btn-signup {
+        background-color: var(--primary-purple, #757575);
+        color: white;
+        padding: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-signup:hover {
+        background-color: #a3a3a3;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="signup-container">
+    <div class="card signup-card">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <a href="{{ url_for('home') }}" class="h2 text-dark text-decoration-none" style="font-weight: 700;">ALPHA</a>
+                <p class="text-muted mt-1">Create your account to get started.</p>
+            </div>
+
+            <!-- This section will display feedback messages (e.g., "Username exists") -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form action="{{ url_for('signup_page') }}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Create a secure password" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-signup">Create Account</button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="text-muted small">Already have an account? <a href="{{ url_for('login_page') }}" class="fw-bold">Log In</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

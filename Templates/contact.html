@@ -1,0 +1,148 @@
+{% extends "_base.html" %}
+{% block title %}Contact Us - FITX{% endblock %}
+
+{% block head_styles %}
+<style>
+  .page-hero {
+    min-height: 40vh; /* You can adjust this height */
+    display: grid;
+    align-items: center;
+    text-align: center;
+    background: #0b0b0b;
+    border-bottom: 1px solid var(--line);
+  }
+  
+  /* NEW: This is the main container for the light-colored box */
+  .contact-container {
+    max-width: 1100px; /* Sets the max width of the box */
+    margin-inline: auto; /* Centers the box on the page */
+    background-color: #f6f6f6; /* The light grey background from your image */
+    padding: 3rem; /* Adds space inside the box */
+    border-radius: var(--radius-lg); /* Gives it rounded corners */
+    color: #111; /* Sets the default text color inside to black */
+  }
+
+  /* UPDATED: The grid now sits inside the new container */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+  }
+
+  .contact-form .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  /* UPDATED: Form inputs are now white */
+  .contact-form .form-control {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: #ffffff; /* White background */
+    border: 1px solid #ccc; /* Lighter border */
+    border-radius: var(--radius-sm);
+    color: #000; /* Dark text */
+  }
+  .contact-form .form-control::placeholder {
+      color: #6c757d; /* Makes placeholder text visible */
+  }
+  .contact-form .form-control:focus {
+    outline: none;
+    border-color: #000000; /* Purple highlight on focus */
+  }
+  
+  /* NEW: Styling for the purple button */
+  .btn-purple {
+    background-color: #000000; /* Purple color from your image */
+    color: #fff;
+    border-color: #000000;
+    padding: .9rem 2.2rem; /* Make button a bit larger */
+  }
+  .btn-purple:hover {
+    background-color: #717171;
+    border-color: #000000;
+    color: #fff;
+  }
+  
+  /* UPDATED: Text inside the info panel */
+  .contact-info h4 {
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0.75rem;
+  }
+  .contact-info p {
+    color: #555; /* Dark grey text */
+    line-height: 1.8;
+  }
+  .contact-info a {
+      color: #717171; /* Purple links */
+      text-decoration: none;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 800px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+    .contact-container {
+      padding: 2rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- This hero section remains dark to create a nice contrast -->
+<section class="page-hero">
+  <div class="wrap">
+    <h1 class="section-title" style="margin-bottom: 0;">GET IN TOUCH</h1>
+    <p class="eyebrow">WE'RE HERE TO HELP</p>
+  </div>
+</section>
+
+<!-- This section will have the dark background -->
+<section class="section" style="background-color: #0b0b0b;">
+  <!-- This new container creates the centered, light-colored box -->
+  <div class="contact-container">
+    <div class="contact-grid">
+
+      <!-- Column 1: Contact Form -->
+      <div class="contact-form">
+        <form action="#" method="POST">
+          <div class="form-group">
+            <input type="text" id="name" name="name" class="form-control" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" name="email" class="form-control" placeholder="Your Email" required>
+          </div>
+          <div class="form-group">
+            <textarea id="message" name="message" class="form-control" rows="6" placeholder="Your Message" required></textarea>
+          </div>
+          <!-- Apply the new purple button style -->
+          <button type="submit" class="btn btn-purple">Send Message</button>
+        </form>
+      </div>
+      
+      <!-- Column 2: Contact Info -->
+      <div class="contact-info">
+        <h4>CUSTOMER SUPPORT</h4>
+        <p>
+          For questions about orders, shipping, or returns, our team is ready to assist you.<br>
+          <a href="mailto:support@fitx.com">support@fitx.com</a>
+        </p>
+        
+        <h4 style="margin-top: 2rem;">PRESS & MEDIA</h4>
+        <p>
+          For media inquiries and collaborations, please reach out to our press team.<br>
+          <a href="mailto:press@fitx.com">press@fitx.com</a>
+        </p>
+
+        <h4 style="margin-top: 2rem;">STORE HOURS</h4>
+        <p>
+          Monday – Friday: 9am – 8pm<br>
+          Saturday – Sunday: 10am – 6pm
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

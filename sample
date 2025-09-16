@@ -1,0 +1,17 @@
+/Alpha
+|-- app.py
+|-- create_db.py
+|-- products.db
+|
+|-- /static/
+|   |-- /assets/
+|       |-- /css/
+|       |-- /icons/
+|       |-- (all your images and videos...)
+|
+|-- /templates/
+    |-- index.html
+    |-- products.html
+    |-- product-detail.html
+    |-- signin.html
+    

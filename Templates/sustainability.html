@@ -1,0 +1,61 @@
+{% extends "_base.html" %}
+{% block title %}Sustainability - FITX{% endblock %}
+
+{% block head_styles %}
+<style>
+  .page-hero {
+    min-height: 40vh;
+    display: grid;
+    align-items: center;
+    text-align: center;
+    background: #0b0b0b;
+    border-bottom: 1px solid var(--line);
+  }
+  .commitments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: left;
+  }
+  .commitment-item h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .commitment-item p {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <h1 class="section-title" style="margin-bottom: 0;">A LIGHTER FOOTPRINT</h1>
+    <p class="eyebrow">OUR COMMITMENT TO SUSTAINABILITY</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 900px; margin-inline: auto;">
+    <p style="text-align: center; color: var(--muted); margin-bottom: 4rem;">
+      We recognize that the fashion industry has a significant environmental impact. As a curator of the world's leading brands, FITX is in a unique position to champion positive change. Our commitment is to make conscious consumption accessible, offering products and promoting practices that contribute to a healthier planet.
+    </p>
+
+    <div class="commitments-grid">
+      <div class="commitment-item">
+        <h4>CURATED SELECTION</h4>
+        <p>We actively seek out and feature sustainable collections from our brand partners, including products made from recycled materials like Adidas's Primeblue and Nike's Flyleather. We make it easy for you to find and choose eco-conscious options.</p>
+      </div>
+      <div class="commitment-item">
+        <h4>ECO-FRIENDLY OPERATIONS</h4>
+        <p>From our packaging to our energy consumption, we are continuously improving our operations. All our shipments are sent in 100% recycled and recyclable materials, and we partner with carbon-neutral shipping providers whenever possible.</p>
+      </div>
+      <div class="commitment-item">
+        <h4>COMMUNITY & LONGEVITY</h4>
+        <p>True sustainability means extending the life of what you own. We support this by providing shoe care guides and partnering with local repair services, encouraging a culture of maintenance over replacement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

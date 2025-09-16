@@ -1,0 +1,95 @@
+<!-- templates/checkout.html -->
+
+{% extends "_base.html" %}
+{% block title %}Checkout - ALPHA{% endblock %}
+
+{% block head_styles %}
+<style>
+    body { background-color: #f8f9fa !important; padding: 0px;}
+    .checkout-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 3rem; }
+    .form-control:focus { border-color: #111; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
+    .order-summary-checkout { position: sticky; top: 100px; }
+    .summary-item { display: flex; align-items: center; gap: 1rem; }
+    .summary-item-img { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; border: 1px solid #dee2e6; }
+    .btn-place-order { background-color: #111; color: #fff; padding: 0.9rem; font-weight: 600; }
+    .btn-place-order:hover { background-color: #333; color: #fff; }
+    @media (max-width: 992px) {
+        .checkout-container { grid-template-columns: 1fr; }
+        .order-summary-checkout { order: -1; /* Move summary to the top on mobile */ margin-bottom: 2rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container my-5">
+    <div class="checkout-container">
+        <!-- Left Side: Shipping and Payment Form -->
+        <div>
+            <h2 class="h4 mb-4">Shipping & Payment</h2>
+            <form action="{{ url_for('checkout_page') }}" method="post">
+                <!-- Shipping Details -->
+                <div class="card card-body">
+                    <h5 class="mb-3">Shipping Address</h5>
+                    <div class="mb-3">
+                        <label for="customerName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="customerName" name="customer_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shippingAddress" class="form-label">Street Address</label>
+                        <input type="text" class="form-control" id="shippingAddress" name="shipping_address" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="postalCode" class="form-label">Postal Code</label>
+                            <input type="text" class="form-control" id="postalCode" name="postal_code" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="card card-body mt-4">
+                    <h5 class="mb-3">Payment Method</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" id="cod" value="Cash on Delivery" checked>
+                        <label class="form-check-label" for="cod">Cash on Delivery</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" id="online" value="Online Payment" disabled>
+                        <label class="form-check-label text-muted" for="online">Pay Online (Coming Soon)</label>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-place-order">Place Order</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side: Order Summary -->
+        <aside class="order-summary-checkout">
+            <div class="card card-body">
+                <h5 class="mb-3">Your Order ({{ cart_item_count }} items)</h5>
+                {% for item in cart_items %}
+                <div class="summary-item {% if not loop.last %}mb-3{% endif %}">
+                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" class="summary-item-img">
+                    <div>
+                        <p class="mb-0 fw-bold small">{{ item.name }}</p>
+                        <p class="mb-0 text-muted small">Size: {{ item.size }} | Qty: {{ item.quantity }}</p>
+                    </div>
+                    <p class="mb-0 ms-auto fw-bold small">₹{{ "%.2f"|format(item.price * item.quantity) }}</p>
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <strong>Total</strong>
+                    <strong>₹{{ "%.2f"|format(total_price) }}</strong>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+{% endblock %}

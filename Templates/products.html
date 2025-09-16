@@ -1,0 +1,395 @@
+ <!-- templates/products.html (All Code in One File) -->
+ 
+
+ {% extends "_base.html" %}
+ 
+
+ {% block title %}Products - ALPHA{% endblock %}
+ 
+
+ {% block head_styles %}
+ <style>
+  /* --- MODERN & SLEEK PRODUCT LISTING STYLES --- */
+  body {
+   background-color: #ffffff !important;
+   color: #111111 !important;
+   /* padding-top: 80px; */
+   padding: 0px;
+  }
+ 
+
+  /* Navbar override for this page */
+ 
+
+  .page-container {
+   max-width: 1600px;
+  }
+ 
+
+  /* --- SLEEK FILTER SIDEBAR STYLES --- */
+  #filters-sidebar aside,
+  .offcanvas-body {
+   position: sticky;
+   top: 100px;
+   overflow-y: auto; /* Enable vertical scrolling */
+   max-height: 70vh; /* Set a maximum height */
+   padding: 0px;
+  }
+ 
+
+  #filters-sidebar aside::-webkit-scrollbar,
+  .offcanvas-body::-webkit-scrollbar {
+   width: 5px; /* Adjust scrollbar width */
+  }
+ 
+
+  #filters-sidebar aside::-webkit-scrollbar-track,
+  .offcanvas-body::-webkit-scrollbar-track {
+   background: #f1f1f1; /* Scrollbar track color */
+  }
+ 
+
+  #filters-sidebar aside::-webkit-scrollbar-thumb,
+  .offcanvas-body::-webkit-scrollbar-thumb {
+   background: #aaa; /* Scrollbar thumb color */
+   border-radius: 5px;
+  }
+ 
+
+  #filters-sidebar aside::-webkit-scrollbar-thumb:hover,
+  .offcanvas-body::-webkit-scrollbar-thumb:hover {
+   background: #777; /* Scrollbar thumb hover color */
+  }
+ 
+
+  #filters-sidebar h5,
+  .offcanvas-title {
+   font-weight: 600;
+   font-size: 1.1rem;
+   color: #333;
+   margin-bottom: 0.75rem;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+  }
+ 
+
+  .accordion-item {
+   border: none;
+   margin-bottom: 0.75rem;
+   background-color: #fff;
+   border-bottom: 1px solid #ddd;
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+   border-radius: 0.25rem;
+  }
+ 
+
+  .accordion-button {
+   background-color: #fff !important;
+   color: #333;
+   box-shadow: none !important;
+   padding: 1rem 1.25rem;
+   font-weight: 500;
+   font-size: 1rem;
+   border-radius: 0 !important;
+   border: none;
+   display: flex;
+   align-items: center;
+   transition: background-color 0.15s ease-in-out;
+   position: relative;
+  }
+ 
+
+  .accordion-button:hover {
+   background-color: #f9f9f9 !important;
+  }
+ 
+
+  .accordion-button:focus {
+   border-color: #aaa;
+   box-shadow: none !important;
+   background-color: #eee !important;
+  }
+ 
+
+  .accordion-button:not(.collapsed) {
+   color: #000;
+   background-color: #eee !important;
+  }
+ 
+
+  .accordion-button::after {
+   display: none;
+  }
+ 
+
+  .accordion-body {
+   padding: 1rem 1.25rem;
+  }
+ 
+
+  .form-check {
+   padding-left: 1.5em;
+   margin-bottom: 0.5rem;
+  }
+ 
+
+  .form-check-input {
+   float: left;
+   margin-left: -1.5em;
+   border-radius: 0;
+   border: 1px solid #777;
+   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  }
+ 
+
+  .form-check-label {
+   color: #555;
+   font-size: 0.9rem;
+  }
+ 
+
+  .form-check-input:checked {
+   background-color: #333;
+   border-color: #333;
+  }
+ 
+
+  .form-check-input:focus {
+   box-shadow: none;
+  }
+ 
+
+  /* --- MODERN PRODUCT CARD STYLES --- */
+  .product-grid-link { text-decoration: none; color: inherit; display: block; }
+  .product-card-modern { background-color: transparent; border: none; margin-bottom: 2rem; }
+  .product-image-wrapper {
+   background-color: #f4f4f4; border-radius: 12px;
+   overflow: hidden; position: relative; border: 1px solid #e5e5e5;
+  }
+  .product-image-wrapper img {
+   width: 100%; height: auto; aspect-ratio: 1/1;
+   object-fit: cover; transition: transform 0.3s ease;
+   margin-bottom: 50px;
+  }
+  .product-grid-link:hover .product-image-wrapper img { transform: scale(1.05); }
+  .product-badge {
+   position: absolute; top: 1rem; left: 1rem;
+   background-color: #111; color: #fff; padding: 0.3rem 0.75rem;
+   border-radius: 6px; font-size: 0.8rem; font-weight: 500;
+  }
+  .product-info { padding-top: 1rem; }
+  .product-name { font-weight: 500; font-size: 1rem; color: #ffffff; margin-bottom: 0.25rem; }
+  .product-category-list { font-size: 0.9rem; color: #ffffff; margin-bottom: 0.5rem; }
+  .product-price-list { font-weight: 500; font-size: 1rem; color: #fffdfd; }
+  .product-price-list .mrp { text-decoration: line-through; color: #ffffff; margin-left: 0.5rem; }
+ 
+
+  /* Style adjustments for displaying info on the image */
+  .product-image-info {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   background: #343a40;
+   /* Semi-transparent background */
+   color: white;
+   padding: 0.5rem;
+   border-bottom-left-radius: 12px;
+   border-bottom-right-radius: 12px;
+  }
+ 
+
+  .product-image-info p {
+   margin: 0;
+   font-size: 0.9rem;
+   white-space: nowrap; /* Prevent text from wrapping */
+   overflow: hidden; /* Hide overflowing text */
+   text-overflow: ellipsis; /* Add ellipsis to overflowing text */
+  }
+ </style>
+ 
+
+ {% endblock %}
+ 
+
+ {% block content %}
+ <div class="container-fluid page-container mt-4">
+ 
+
+  <!-- Title and Mobile Filter Button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+   <div class="d-lg-none">
+    <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas">
+     <i class="bi bi-funnel-fill"></i> Filters
+    </button>
+   </div>
+  </div>
+ 
+
+  <div class="row">
+   <!-- Sidebar: Filters (Hidden on small screens) -->
+   <div class="col-lg-2 d-none d-lg-block" id="filters-sidebar">
+    <aside>
+     <form id="filter-form-desktop" action="{{ url_for('products_page') }}" method="get">
+      <h5 class="mb-3">Filters</h5>
+      <div class="accordion" id="filters-accordion-desktop">
+       <!-- Category Filter -->
+       <div class="accordion-item">
+        <h2 class="accordion-header">
+         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#category-collapse-desktop">
+          Category
+         </button>
+        </h2>
+        <div id="category-collapse-desktop" class="accordion-collapse collapse show">
+         <div class="accordion-body">
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="category" value="Men" id="cat-men-desktop" {% if 'Men' in selected_categories %}checked{% endif %}>
+           <label class="form-check-label" for="cat-men-desktop">Men</label>
+          </div>
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="category" value="Women" id="cat-women-desktop" {% if 'Women' in selected_categories %}checked{% endif %}>
+           <label class="form-check-label" for="cat-women-desktop">Women</label>
+          </div>
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="category" value="Unisex" id="cat-unisex-desktop" {% if 'Unisex' in selected_categories %}checked{% endif %}>
+           <label class="form-check-label" for="cat-unisex-desktop">Unisex</label>
+          </div>
+         </div>
+        </div>
+       </div>
+       <!-- Price Filter -->
+       <div class="accordion-item">
+        <h2 class="accordion-header">
+         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#price-collapse-desktop">
+          Price
+         </button>
+        </h2>
+        <div id="price-collapse-desktop" class="accordion-collapse collapse show">
+         <div class="accordion-body">
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="price" value="0-8000" id="price-1-desktop" {% if selected_price == '0-8000' %}checked{% endif %}>
+           <label class="form-check-label" for="price-1-desktop">Under ₹8,000</label>
+          </div>
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="price" value="8001-12000" id="price-2-desktop" {% if selected_price == '8001-12000' %}checked{% endif %}>
+           <label class="form-check-label" for="price-2-desktop">₹8,001 - ₹12,000</label>
+          </div>
+          <div class="form-check mb-2">
+           <input class="form-check-input filter-change" type="checkbox" name="price" value="12001-99999" id="price-3-desktop" {% if selected_price == '12001-99999' %}checked{% endif %}>
+           <label class="form-check-label" for="price-3-desktop">Over ₹12,000</label>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <a href="{{ url_for('products_page') }}" class="btn btn-outline-secondary btn-sm mt-4 w-100">Clear All Filters</a>
+     </form>
+    </aside>
+   </div>
+ 
+
+   <!-- Main Content: Product Grid -->
+   <div class="col-lg-10" id="main-content">
+    <main>
+     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for product in products %}
+      <div class="col">
+       <a href="{{ url_for('product_detail_page', product_id=product.id) }}" class="product-grid-link">
+        <div class="product-card-modern">
+         <div class="product-image-wrapper">
+          <img src="{{ url_for('static', filename=product.image_main) }}" alt="{{ product.name }}">
+          {% if product.badge %}<div class="product-badge">{{ product.badge }}</div>{% endif %}
+          <div class="product-image-info">
+           <p class="product-name">{{ product.name }}</p>
+           <p class="product-category-list">{{ product.category }} Shoes</p>
+           <p class="product-price-list">₹ {{ "%.2f"|format(product.price) }}</p>
+          </div>
+         </div>
+        </div>
+       </a>
+      </div>
+      {% else %}
+      <div class="col-12">
+       <h4 class="text-center text-muted py-5">No products found matching your filters. Try clearing them!</h4>
+      </div>
+      {% endfor %}
+     </div>
+    </main>
+   </div>
+  </div>
+ </div>
+ 
+
+ <!-- Offcanvas for Mobile Filters -->
+ <div class="offcanvas offcanvas-start" tabindex="-1" id="filtersOffcanvas">
+  <div class="offcanvas-header">
+   <h5 class="offcanvas-title">Filters</h5>
+   <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+   <form id="filter-form-mobile" action="{{ url_for('products_page') }}" method="get">
+    <div class="accordion" id="filters-accordion-mobile">
+     <!-- Category Filter -->
+     <div class="accordion-item">
+      <h2 class="accordion-header">
+       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#category-collapse-mobile">Category</button>
+      </h2>
+      <div id="category-collapse-mobile" class="accordion-collapse collapse show">
+       <div class="accordion-body">
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="category" value="Men" id="cat-men-mobile" {% if 'Men' in selected_categories %}checked{% endif %}>
+         <label class="form-check-label" for="cat-men-mobile">Men</label>
+        </div>
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="category" value="Women" id="cat-women-mobile" {% if 'Women' in selected_categories %}checked{% endif %}>
+         <label class="form-check-label" for="cat-women-mobile">Women</label>
+        </div>
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="category" value="Unisex" id="cat-unisex-mobile" {% if 'Unisex' in selected_categories %}checked{% endif %}>
+         <label class="form-check-label" for="cat-unisex-mobile">Unisex</label>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Price Filter -->
+     <div class="accordion-item">
+      <h2 class="accordion-header">
+       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#price-collapse-mobile">Price</button>
+      </h2>
+      <div id="price-collapse-mobile" class="accordion-collapse collapse show">
+       <div class="accordion-body">
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="price" value="0-8000" id="price-1-mobile" {% if selected_price == '0-8000' %}checked{% endif %}>
+         <label class="form-check-label" for="price-1-mobile">Under ₹8,000</label>
+        </div>
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="price" value="8001-12000" id="price-2-mobile" {% if selected_price == '8001-12000' %}checked{% endif %}>
+         <label class="form-check-label" for="price-2-mobile">₹8,001 - ₹12,000</label>
+        </div>
+        <div class="form-check mb-2">
+         <input class="form-check-input filter-change" type="checkbox" name="price" value="12001-99999" id="price-3-mobile" {% if selected_price == '12001-99999' %}checked{% endif %}>
+         <label class="form-check-label" for="price-3-mobile">Over ₹12,000</label>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <a href="{{ url_for('products_page') }}" class="btn btn-outline-secondary btn-sm mt-4 w-100">Clear All Filters</a>
+   </form>
+  </div>
+ </div>
+ {% endblock %}
+ 
+
+ {% block scripts %}
+ <script>
+  document.addEventListener('DOMContentLoaded', function() {
+   // Function to automatically submit the form when a filter changes
+   document.querySelectorAll('.filter-change').forEach(input => {
+    input.addEventListener('change', function() {
+     this.closest('form').submit();
+    });
+   });
+  });
+ </script>
+ {% endblock %}

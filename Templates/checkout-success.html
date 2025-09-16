@@ -1,0 +1,118 @@
+<!-- templates/checkout-success.html -->
+
+{% extends "_base.html" %}
+
+{% block title %}Order Confirmed! - ALPHA{% endblock %}
+
+{% block head_styles %}
+<style>
+    /* --- CHECKOUT SUCCESS PAGE STYLES --- */
+    .success-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 80vh;
+        padding: 4rem;
+    }
+
+    .success-animation {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+    }
+
+    /* The "drawing" animation magic happens here */
+    .success-animation .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 3;
+        stroke-miterlimit: 10;
+        stroke: #4bb543; /* Success Green */
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .success-animation .checkmark-icon {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        stroke-width: 4;
+        stroke: #4bb543;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    .success-heading {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .success-message {
+        font-size: 1.1rem;
+        color: #6c757d;
+        max-width: 500px;
+        margin-bottom: 2.5rem;
+    }
+    
+    .btn-continue-shopping {
+        background-color: #000000;
+        color: white;
+        padding: 0.9rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .btn-continue-shopping:hover {
+        background-color: #818181;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="success-container">
+    <!-- SVG Animation -->
+    <svg class="success-animation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="checkmark-icon" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+
+    <h1 class="success-heading">Thank You For Your Order!</h1>
+    <p class="success-message">
+        Your order has been confirmed. A confirmation receipt has been sent to your email.
+    </p>
+
+    {% if ordered_items %}
+    <div style="margin:2rem 0; max-width:600px; width:100%;">
+        <h2 style="font-size:1.3rem; font-weight:600; margin-bottom:1rem;">Ordered Items</h2>
+        <ul style="list-style:none; padding:0;">
+        {% for item in ordered_items %}
+            <li style="background:#f8f8f8; margin-bottom:.7rem; border-radius:10px; padding:1rem; display:flex; align-items:center; gap:1.2rem;">
+                {% if item.image %}
+                <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+                {% endif %}
+                <div style="flex:1; text-align:left;">
+                    <div style="font-weight:600;">{{ item.name }}</div>
+                    <div style="font-size:.98rem; color:#555;">Size: {{ item.size }} | Qty: {{ item.quantity }}</div>
+                </div>
+                <div style="font-weight:600; color:#000000;">₹{{ '%.2f'|format(item.price) }}</div>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('products_page') }}" class="btn-continue-shopping">Continue Shopping</a>
+</div>
+{% endblock %}

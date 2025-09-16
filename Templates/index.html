@@ -1,0 +1,683 @@
+{% extends "_base.html" %}
+{% block title %}ALPHA Redefine Your Step{% endblock %}
+
+{% block head_styles %}
+<style>
+  /* ===============================
+     BLACK LABEL THEME – GLOBAL
+     =============================== */
+  :root{
+    --bg:#000;           /* page background */
+    --paper:#0b0b0b;     /* dark surface */
+    --ink:#ffffff;       /* primary text */
+    --muted:#bfbfbf;     /* secondary text */
+    --line:#1f1f1f;      /* separators */
+    --accent:#ffffff;    /* white accents */
+    --brand:#ffffff;     /* button fill (white on black brand vibe) */
+    --brand-ink:#000000; /* button text */
+    --gold:#ffc107;      /* star rating */
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --radius-lg: 18px;
+    --radius-sm: 10px;
+    --wrap: min(1200px, 92vw);
+    --space-1: .5rem;   --space-2: 1rem;  --space-3: 1.5rem;  --space-4: 2rem;  --space-5: 3rem;  --space-6: 4rem;
+  }
+
+  html,body{height:100%}
+  body{
+    background: var(--bg) !important;
+    color: var(--ink) !important;
+    padding:0; margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height:1.65; font-weight:300; overflow-x:hidden;
+  }
+  .wrap{width:var(--wrap); margin-inline:auto}
+  .section{padding: var(--space-6) 0}
+  .section-title{
+    font-size: clamp(1.4rem, 1rem + 2vw, 2.2rem);
+    text-transform: uppercase; letter-spacing:-0.09em; font-weight:700; margin:0 0 var(--space-4);
+  }
+  .eyebrow{font-size:.8rem; letter-spacing:1.22em; color:var(--muted); text-transform:uppercase}
+
+  /* ===============================
+     HERO – depth + motion-safe
+     =============================== */
+  .hero-section{
+    position:relative; min-height: 84vh; display:grid; align-items:center; isolation:isolate;
+  }
+  .hero-media{
+    position:absolute; inset:0; z-index:0; overflow:hidden; opacity:.55;
+  }
+  .hero-media img{ width:100%; height:100%; object-fit:cover; filter:grayscale(100%) contrast(1.05); transform:scale(1.06); }
+  .hero-gradient{ position:absolute; inset:0; background: radial-gradient(1200px 600px at 20% 20%, rgba(255,255,255,.18), transparent 60%),
+                                             radial-gradient(900px 500px at 80% 80%, rgba(255,255,255,.08), transparent 70%);
+                   mix-blend-mode: screen }
+  .hero-content{ position:relative; z-index:1; padding: clamp(1rem, 1rem + 2vw, 3rem) 0 }
+  .hero-headline{
+    font-size: clamp(2.2rem, 1.5rem + 3.2vw, 3rem);
+    font-weight:700; line-height:1.15; margin:0 0 var(--space-3);
+    text-wrap:balance; letter-spacing:.02em;
+  }
+  .hero-subheadline{ font-size: clamp(1rem, .9rem + .6vw, 1.3rem); color:var(--muted); max-width: 50ch; margin:0 0 var(--space-4) }
+  .hero-ctas{ display:flex; flex-wrap:wrap; gap: .8rem }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; font-weight:600; letter-spacing:.06em; border-radius: 999px; padding:.9rem 1.6rem; border:2px solid transparent; transition: transform .15s ease, background .2s ease, color .2s ease, border-color .2s ease; will-change: transform }
+  .btn:active{ transform:scale(.98) }
+  .btn-primary{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand) }
+  .btn-primary:hover{ background:#e9e9e9; border-color:#e9e9e9 }
+  .btn-secondary{ background:transparent; color:var(--ink); border-color: var(--ink) }
+  .btn-secondary:hover{ background: rgba(255,255,255,.12) }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .hero-media img{ transform:none }
+    .brands-track{ animation-duration: 40s }
+  }
+
+  /* ===============================
+     TRUST STRIP – compact & clean
+     =============================== */
+  .trust-strip{
+    background:#fff; color:#000; border-block: 1px solid #eee;
+  }
+  .trust-row{ display:grid; grid-template-columns: repeat(4,1fr); gap:1rem; align-items:center; padding: 1rem 0 }
+  .trust-item{ display:flex; align-items:center; justify-content:center; gap:.6rem; font-weight:500 }
+  .trust-item img{ width:28px; height:28px; filter:brightness(0) invert(0); opacity:.9 }
+  @media (max-width: 720px){ .trust-row{ grid-template-columns: 1fr 1fr; row-gap: .8rem } }
+
+  /* ===============================
+     BRAND MARQUEE – CSS driven
+     =============================== */
+  .brands{ background:var(--bg); border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden }
+  .brands .wrap{ padding-block: 1.2rem }
+  .brands-title{ text-align:center; color:#fff; margin-bottom:.8rem; font-weight:500 }
+  .brands-rail{ position:relative; height:72px; mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) }
+  .brands-track{ position:absolute; inset:0; display:flex; align-items:center; gap: 3.2rem; animation: rail 26s linear infinite }
+  .brand-logo{ height:60px; width:auto; filter: grayscale(100%) brightness(190%); opacity:.9; transition: transform .25s ease }
+  .brand-logo:hover{ transform:scale(1.08) }
+  @keyframes rail{ from{ transform: translateX(0)} to{ transform: translateX(-50%) } }
+
+
+  /* --- START: COMPLETE REDESIGN FOR TRENDING SECTION --- */
+  .trending { 
+    background: #0b0b0b; 
+    color: #fff; 
+    border-top: 1px solid var(--line);
+  }
+  .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+  }
+  .product-card {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      min-height: 480px; /* Taller card height */
+      background: var(--paper);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: box-shadow 0.4s ease, transform 0.4s ease;
+  }
+  .product-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 70%;
+      background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+      transition: opacity 0.3s ease;
+  }
+  .product-card-image {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+  }
+  .product-card-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+      color: var(--ink);
+      z-index: 1;
+      display: grid;
+      gap: 0.5rem;
+  }
+  .product-card-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: .04em;
+      color: var(--ink);
+  }
+  .product-card-price {
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: var(--muted);
+  }
+  .product-card-cta {
+      opacity: 0; /* Initially hidden */
+      transform: translateY(10px); /* Initially moved down */
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      margin-top: 0.5rem;
+  }
+  
+  /* --- HOVER EFFECTS (MODIFIED) --- */
+  .product-card:hover {
+      transform: translateY(-5px); /* Adds a subtle lift effect */
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6); /* Makes shadow more pronounced */
+  }
+  .product-card:hover .product-card-image {
+      transform: scale(1.05); /* Zoom image on hover */
+  }
+  .product-card:hover .product-card-cta {
+      opacity: 1; /* Show button on hover */
+      transform: translateY(0); /* Slide button up on hover */
+  }
+  /* --- END: COMPLETE REDESIGN FOR TRENDING SECTION --- */
+
+  /* --- START: MODIFIED REVIEWS SECTION STYLES --- */
+  
+  .reviews-section {
+    /* Background changed to white */
+    background: #000000;
+    border-top: 1px solid #e0e0e0; /* Light grey separator */
+    position: relative;
+    overflow: hidden;
+  }
+  /* Added rule to make section title black */
+  .reviews-section .section-title {
+    color: #ffffff;
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-3);
+  }
+  .review-card {
+    /* White card on a white background, defined by border and shadow */
+    background: #ffffff;
+    border: 1px solid #000000; /* Black border as requested */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+
+    /* General Layout */
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .review-card:hover {
+      transform: translateY(-5px); /* Lift effect on hover */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .review-avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e0e0e0; /* Light grey border for avatar */
+  }
+  .review-author h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    /* Text color changed to black */
+    color: #000000;
+  }
+  .review-author span {
+    font-size: 0.8rem;
+    /* Text color changed to dark grey */
+    color: #555555;
+  }
+  .review-stars {
+    color: var(--gold); /* Gold stars are fine */
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    margin-top: auto;
+  }
+  .review-body p {
+    margin: 0;
+    /* Text color changed to a readable dark grey */
+    color: #333333;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  /* --- END: MODIFIED REVIEWS SECTION STYLES --- */
+
+  /* --- START: FEATURED PRODUCTS SPLIT SECTION STYLES (MODERNIZED) --- */
+  .featured-products-section {
+    background: var(--paper); /* Changed from #fff to paper for dark theme */
+    border-top: 1px solid var(--line); /* Added for consistency */
+  }
+
+  .featured-products-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Kept original layout for larger screens */
+    gap: var(--space-3);
+    max-width: 900px;
+    margin-inline: auto;
+    padding: var(--space-4) 0;
+  }
+
+  .featured-product-card {
+    position: relative;
+    display: block; /* Make the whole card clickable */
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    min-height: 550px; /* Adjusted to be consistent with image sizes */
+    background: rgba(255, 255, 255, 0.05); /* Similar to review-card base */
+    backdrop-filter: blur(12px); /* Glassmorphism effect */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow); /* Modern shadow */
+    transition: box-shadow 0.4s ease, transform 0.4s ease, background 0.3s ease, border-color 0.3s ease;
+
+    /* Grid Pattern - like trending now (actually like review-card) */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 25px 25px;
+  }
+
+  /* Overlay for text readability, similar to .product-card::after */
+  .featured-product-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 70%; /* Adjust as needed */
+      background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+      transition: opacity 0.3s ease;
+      opacity: 1; /* Always visible for text contrast */
+  }
+
+  .featured-product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Image fills the card height */
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    filter: grayscale(0.2); /* Subtle effect */
+  }
+
+  .featured-product-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-3);
+    color: var(--ink);
+    z-index: 2; /* Ensure content is above ::after gradient */
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .featured-product-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .featured-product-description {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .featured-product-cta {
+      opacity: 0; /* Initially hidden */
+      transform: translateY(10px); /* Initially moved down */
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      margin-top: var(--space-2);
+  }
+/* Add this to your style.css */
+/* Featured Products Section with White Grid Background */
+.featured-products-section {
+    padding: 4rem 0;
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(to right, #e9ecef 1px, transparent 1px),  /* Vertical lines */
+        linear-gradient(to bottom, #e9ecef 1px, transparent 1px); /* Horizontal lines */
+    background-size: 60px 60px;
+}
+  /* --- HOVER EFFECTS for Featured Products --- */
+  .featured-product-card:hover {
+      transform: translateY(-5px); /* Adds a subtle lift effect */
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6); /* Makes shadow more pronounced */
+      background: rgba(255, 255, 255, 0.1); /* Slightly brighter on hover */
+      border-color: rgba(255, 255, 255, 0.2);
+  }
+  .featured-product-card:hover .featured-product-image {
+      transform: scale(1.05); /* Zoom image on hover */
+      filter: grayscale(0); /* Remove grayscale on hover */
+  }
+  .featured-product-card:hover .featured-product-cta {
+      opacity: 1; /* Show button on hover */
+      transform: translateY(0); /* Slide button up on hover */
+  }
+  /* --- END: FEATURED PRODUCTS SPLIT SECTION STYLES --- */
+
+  /* ===============================
+     FOOTER – minimal
+     =============================== */
+  .footer{ background:#000; color:#fff; border-top:1px solid var(--line); text-align:center; padding: 2rem 0; font-size:.92rem }
+
+  /* ===============================
+     RESPONSIVE
+     =============================== */
+  @media (max-width: 920px){ .hero-subheadline{max-width:unset} }
+
+  /* Responsive for featured products section */
+  @media (max-width: 900px) {
+    .featured-products-grid {
+      grid-template-columns: 1fr; /* Stack columns on smaller screens */
+      gap: var(--space-2); /* Reduce gap */
+    }
+    .featured-product-card {
+      min-height: 400px; /* Adjust height for mobile view */
+    }
+  }
+
+  /* Additional responsive adjustments from original code */
+  @media (max-width: 600px){
+    .driven-section h2 {
+      font-size:1rem;
+    }
+    /* .info-footer-section .wrap {
+      padding:1rem 0;
+      gap:.7rem;
+    } */ /* This was commented out in original, so kept commented */
+    .info-footer-section form {
+      flex-direction:column;
+      gap:.5rem;
+    }
+    .driven-section {
+    position: relative;
+    border-top: 1px solid var(--line);
+    background-image: url("static/assets/images/your-background-image.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+.driven-section .wrap {
+    position: relative;
+    z-index: 2; /* Ensure content is above the image */
+}
+    /* .info-footer-section .wrap > div {
+      font-size:.95rem;
+    }
+    .info-footer-section .wrap > .btn {
+      width:100%;
+    }
+    .info-footer-section .wrap > .grid {
+      grid-template-columns:1fr 1fr;
+      gap:1rem;
+    } */ /* These were commented out in original, so kept commented */
+  }
+  /* Featured Products Section Heading Color */
+.featured-products-section .section-title {
+    color: #000000; /* Change to any color you want */
+}
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- ================= HERO ================= -->
+  <section class="hero-section">
+    <div class="hero-media" aria-hidden="true">
+      <img src="{{ url_for('static', filename='assets/images/icons/R.jpg') }}" alt="Black & white athletic texture" class="hero-img">
+      <div class="hero-gradient"></div>
+    </div>
+    <div class="wrap hero-content">
+      <span class="eyebrow">FITX Performance</span>
+      <h1 class="hero-headline" style="font-family: 'Inter', sans-serif; width: 104%;">MADE FOR HUSTLE WORN BY STYLE</h1>
+      <p class="hero-subheadline">Experience the future of footwear with our AI‑designed collection. Launch offer: <strong>20% off</strong> your first order.</p>
+      <div class="hero-ctas">
+        <a href="{{ url_for('products_page') }}" class="btn btn-primary">Explore Collection</a>
+        <a href="#featured" class="btn btn-secondary">Limited Editions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== TRUST STRIP =============== -->
+  <section class="trust-strip">
+    <div class="wrap trust-row">
+      <div class="trust-item">
+        <img src="{{ url_for('static', filename='assets/images/icons/shipping-fast-solid-64.png') }}" alt="Free Shipping icon"> Free Shipping
+      </div>
+      <div class="trust-item">
+        <img src="{{ url_for('static', filename='assets/images/icons/return-63-64.png') }}" alt="Easy Returns icon"> Easy Returns
+      </div>
+      <div class="trust-item">
+        <img src="static/assets/images/guarantee-37-64.png" alt="100% Genuine icon"> 100% Genuine
+      </div>
+      <div class="trust-item">
+        <img src="{{ url_for('static', filename='assets/images/icons/secure-payment-fill-4-64.png') }}" alt="Secure Payments icon"> Secure Payments
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== BRANDS SCROLLER =============== -->
+  <section class="brands" aria-label="Trusted by brands">
+    <div class="wrap">
+      <div class="brands-title">TRUSTED BY BRANDS</div>
+      <div class="brands-rail" role="marquee" aria-label="Brand logos scrolling horizontally">
+        <!-- Duplicate the sequence so the track can loop seamlessly -->
+        <div class="brands-track">
+          <img src="static/assets/images/icons/Nike Generated Image.jpeg" alt="Nike" class="brand-logo">
+          <img src="static/assets/images/icons/puma-2-logo-png-transparent.png" alt="Puma" class="brand-logo">
+          <img src="static/assets/images/icons/Reebook Generated Image.jpeg" alt="Reebok" class="brand-logo">
+          <img src="static/assets/images/icons/Addidas Generated.jpg" alt="Adidas" class="brand-logo">
+          <img src="static/assets/images/icons/Generated Image August 05, 2025 - 7_44PM (1).jpeg" alt="Fila" class="brand-logo">
+          <img src="static/assets/images/icons/Jordan Generated Image .jpeg" alt="Jordan" class="brand-logo">
+          <img src="static/assets/images/icons/Generated Image August 05, 2025 - 7_44PM.jpeg" alt="New Balance" class="brand-logo">
+          <!-- loop copy -->
+          <img src="static/assets/images/icons/Nike Generated Image.jpeg" alt="Nike" class="brand-logo">
+          <img src="static/assets/images/icons/puma-2-logo-png-transparent.png" alt="Puma" class="brand-logo">
+          <img src="static/assets/images/icons/Reebook Generated Image.jpeg" alt="Reebok" class="brand-logo">
+          <img src="static/assets/images/icons/Addidas Generated.jpg" alt="Adidas" class="brand-logo">
+          <img src="static/assets/images/icons/Generated Image August 05, 2025 - 7_44PM (1).jpeg" alt="Fila" class="brand-logo">
+          <img src="static/assets/images/icons/Jordan Generated Image .jpeg" alt="Jordan" class="brand-logo">
+          <img src="static/assets/images/icons/Generated Image August 05, 2025 - 7_44PM.jpeg" alt="New Balance" class="brand-logo">
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- =============== TRENDING (REDESIGNED) =============== -->
+  <section id="featured" class="section trending">
+    <div class="wrap">
+      <h2 class="section-title">Trending Now</h2>
+      <div class="product-grid"> <!-- Changed class from 'cards' to 'product-grid' -->
+        {% for product in trending_products %}
+          <a href="{{ url_for('product_detail_page', product_id=product.id) }}" class="product-card"> <!-- Changed class from 'card' to 'product-card' -->
+            <img src="{{ url_for('static', filename=product.image_main) }}" alt="{{ product.name }}" class="product-card-image">
+            <div class="product-card-content">
+              <div>
+                <span class="eyebrow">{{ product.category }}</span>
+                <h3 class="product-card-title">{{ product.name }}</h3>
+                <p class="product-card-price">₹{{ "%.2f"|format(product.price) }}</p>
+              </div>
+              <div class="product-card-cta">
+                <span class="btn btn-secondary">View Product</span>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== REVIEWS SECTION (MODIFIED) =============== -->
+  <section class="reviews-section section">
+    <div class="wrap">
+      <h2 class="section-title">WHAT OUR CUSTOMERS SAY</h2>
+      <div class="reviews-grid">
+        <!-- Review Card 1 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">
+              <!-- NOTE: Add a 'user1.jpg' to your static/assets/images folder -->
+              <img src="static/assets/images/woman (1).png" alt="User Avatar">
+            </div>
+            <div class="review-author">
+              <h4>Sarah L.</h4>
+              <span>Verified Buyer</span>
+            </div>
+          </div>
+          <div class="review-body">
+            <p>"Absolutely blown away by the quality and comfort. These shoes are not only stylish but feel like walking on clouds. Worth every penny!"</p>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+        <!-- Review Card 2 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">
+              <!-- NOTE: Add a 'user2.jpg' to your static/assets/images folder -->
+              <img src="static/assets/images/boy.png" alt="User Avatar">
+            </div>
+            <div class="review-author">
+              <h4>Michael B.</h4>
+              <span>Verified Buyer</span>
+            </div>
+          </div>
+          <div class="review-body">
+            <p>"The AI-designed collection is a game-changer. The fit is perfect, and the design gets compliments everywhere I go. Fast shipping too!"</p>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+        <!-- Review Card 3 -->
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">
+              <!-- NOTE: Add a 'user3.jpg' to your static/assets/images folder -->
+              <img src="static/assets/images/woman.png" alt="User Avatar">
+            </div>
+            <div class="review-author">
+              <h4>Jessica P.</h4>
+              <span>Verified Buyer</span>
+            </div>
+          </div>
+          <div class="review-body">
+            <p>"I was skeptical at first, but these are the best running shoes I've ever owned. Lightweight, supportive, and they look incredible."</p>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<!-- =============== FEATURED PRODUCTS SPLIT SECTION =============== -->
+<section class="section featured-products-section">
+  <h2 class="section-title">FRESH DROPS & STREET VIBES</h2>
+  <div class="wrap featured-products-grid">
+    <!-- Product Card 1 -->
+    <div class="featured-product-card">
+      <img src="static/assets/images/Generated Image September 09, 2025 - 3_00PM.png" alt="DROPSET 3" class="featured-product-image">
+      <div class="featured-product-content">
+        <h3 class="featured-product-title">DROPSET 3</h3>
+        <p class="featured-product-description">A perfect blend of performance, durability, and style for every athlete and adventurer.</p>
+        <div class="featured-product-cta">
+          <a href="{{ url_for('products_page') }}" class="btn btn-secondary">View Product</a>
+        </div>
+      </div>
+    </div>
+    <!-- Product Card 2 -->
+    <div class="featured-product-card">
+      <img src="static/assets/images/Generated Image September 09, 2025 - 2_52PM.png" alt="ADIZERO EVO SL" class="featured-product-image">
+      <div class="featured-product-content">
+        <h3 class="featured-product-title">ADIZERO EVO SL</h3>
+        <p class="featured-product-description">Unleash speed and agility with lightweight, high-performance design engineered for optimal comfort and precision.</p>
+        <div class="featured-product-cta">
+          <a href="{{ url_for('products_page') }}" class="btn btn-secondary">View Product</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =============== DRIVEN STATEMENT SECTION =============== -->
+<section class="driven-section"></section>
+  <div class="wrap" style="max-width:900px; margin-inline:auto; padding-block:var(--space-5) var(--space-4);">
+    <div style="text-align:center;">
+      <button style="background:var(--paper); border:1px solid white; border-radius:999px; padding:.4rem 1.2rem; font-size:.92rem; color:var(--muted); margin-bottom:var(--space-2); cursor:pointer;">
+        Discover Our Exquisite Selections
+      </button>
+      <h2 style="font-size:clamp(1.2rem, 1rem + 1vw, 1.8rem); font-weight:500; margin-bottom:var(--space-2); letter-spacing:.01em; color:var(--ink);">
+        We are Driven. We collaborate with ambitious clients to create products that inspire action.<br>
+        <!-- Driven work requires a focused mindset and a passion for excellence that goes beyond the ordinary. -->
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- =============== INFO GRID & FOOTER SECTION =============== -->
+<section class="info-footer-section section" style="background:var(--bg); border-top:0px solid var(--line); padding: 0px;">
+  <div class="wrap" style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); max-width:900px; margin-inline:auto; padding-block:var(--space-4);">
+    <div style="display: flex; width: 250%; gap: 100px;">
+      <div>
+      <div style="display:flex; align-items:center; gap:var(--space-1); font-weight:500; margin-bottom:var(--space-1); color:var(--ink);">
+        <img src="static/assets/images/guarantee-37-64.png" alt="Comfort Icon" style="width:22px; height:22px; filter:brightness(0) invert(1);">
+        Unmatched Comfort and Durability
+      </div>
+      <div style="color:var(--muted); font-size:.98rem; margin-bottom:var(--space-3);">
+        Experience long-lasting comfort with premium materials and expert <br> craftsmanship designed to support every step, day after day.
+      </div>
+      </div>
+      
+      <div>
+      <div style="display:flex; align-items:center; gap:var(--space-1); font-weight:500; margin-bottom:var(--space-1); color:var(--ink);">
+        <img src="static/assets/images/icons/secure-payment-fill-4-64.png" alt="Design Icon" style="width:22px; height:22px; filter:brightness(0) invert(1);">
+        Stylish Design, Superior Performance
+      </div>
+      <div style="color:var(--muted); font-size:.98rem;">
+        Step into style with sleek, modern designs while enjoying top-tier <br> performance for all your active adventures.
+      </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; justify-content:space-between;">
+      <!-- <div style="margin-bottom:var(--space-3);">
+        <div style="font-size:1.2rem; font-weight:600; color:var(--ink);">© 2025 FITX Shoes Inc.<br>All rights reserved.</div>
+      </div> -->
+      <div>
+        </div>
+         </div>
+        <a href="{{ url_for('products_page') }}" class="btn btn-primary" style="background:var(--brand); color:var(--brand-ink); border-radius:999px; padding:.7rem 1.2rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; border:2px solid var(--brand); display:inline-block; margin-bottom:var(--space-3);     position: relative;
+    left: 370px; width: 192px;">Explore</a>
+      
+   
+  </div>
+  <div class="wrap" style="max-width:900px; margin-inline:auto; padding-bottom:var(--space-4); display: none;">
+    <!-- <form style="display:flex; align-items:center; gap:var(--space-1); margin-top:var(--space-3);">
+      <input type="email" placeholder="Email Address" style="flex:1; padding:.7rem 1rem; border-radius:999px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:1rem;">
+      <button type="submit" style="background:var(--brand); color:var(--brand-ink); border-radius:999px; padding:.7rem 1.2rem; font-weight:700; border:none; cursor:pointer;">→</button>
+    </form> -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-2); margin-top:var(--space-4); font-size:.97rem; color:var(--muted);">
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== END SECTION =============== -->
+
+  <!-- =============== FOOTER =============== -->
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+
+{% endblock %} 

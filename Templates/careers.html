@@ -1,0 +1,158 @@
+{% extends "_base.html" %}
+{% block title %}Careers - FITX{% endblock %}
+
+{% block head_styles %}
+<style>
+  .page-hero {
+    min-height: 40vh;
+    display: grid;
+    align-items: center;
+    text-align: center;
+    background: #0b0b0b;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* --- NEW & IMPROVED STYLES --- */
+  
+  .intro-text {
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-width: 750px;
+    margin-inline: auto;
+  }
+
+  /* Styling for the new "Our Values" section */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+  }
+  .value-item .icon {
+    font-size: 2.5rem;
+    color: var(--brand);
+    margin-bottom: 1rem;
+  }
+  .value-item h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+  .value-item p {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* Modernized job listing cards */
+  .job-listing {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    background-color: var(--paper);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .job-listing:hover {
+    background-color: #a3a3a3;
+    border-color: #444;
+  }
+  .job-info h4 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .job-info span {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  /* Styling for the call-to-action at the bottom */
+  .spontaneous-application {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--line);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <h1 class="section-title" style="margin-bottom: 0;">SHAPE THE FUTURE OF FOOTWEAR</h1>
+    <p class="eyebrow">JOIN THE FITX MOVEMENT</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 900px; margin-inline: auto;">
+    <p class="intro-text">
+      At FITX, we're more than a retailer; we're a team of passionate curators, storytellers, and innovators united by our love for sneaker culture. If you're driven, creative, and ready to make an impact, we want to hear from you.
+    </p>
+
+    <hr style="border-color: var(--line); margin: 4rem 0;">
+
+    <!-- NEW: Our Values Section -->
+    <div class="values-section">
+        <h2 class="section-title" style="text-align: center; font-size: 1.5rem;">OUR VALUES</h2>
+        <div class="values-grid">
+            <div class="value-item">
+                <div class="icon"><i class="bi bi-heart"></i></div>
+                <h4>DRIVEN BY PASSION</h4>
+                <p>We are enthusiasts first. Our love for the culture and the products we curate is at the core of everything we do.</p>
+            </div>
+            <div class="value-item">
+                <div class="icon"><i class="bi bi-compass"></i></div>
+                <h4>CURATION WITH PURPOSE</h4>
+                <p>We believe in quality over quantity. Every item is selected with intention, celebrating timeless design and innovation.</p>
+            </div>
+            <div class="value-item">
+                <div class="icon"><i class="bi bi-lightbulb"></i></div>
+                <h4>INNOVATE FEARLESSLY</h4>
+                <p>We constantly push boundaries, from our digital experience to our in-store service, to define the future of retail.</p>
+            </div>
+        </div>
+    </div>
+    
+    <hr style="border-color: var(--line); margin: 4rem 0;">
+
+    <h2 class="section-title" style="text-align: center; font-size: 1.5rem;">CURRENT OPENINGS</h2>
+
+    <div class="job-listing">
+      <div class="job-info">
+        <h4>Retail Specialist (In-Store)</h4>
+        <span>New York, NY</span>
+      </div>
+      <a href="#" class="btn btn-secondary">View <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="job-listing">
+      <div class="job-info">
+        <h4>Digital Marketing Coordinator</h4>
+        <span>Remote</span>
+      </div>
+      <a href="#" class="btn btn-secondary">View <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="job-listing">
+      <div class="job-info">
+        <h4>Warehouse Associate</h4>
+        <span>Los Angeles, CA</span>
+      </div>
+      <a href="#" class="btn btn-secondary">View <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="spontaneous-application">
+      <p style="color: var(--muted);">
+        Don't see the right fit? We're always looking for exceptional talent. Send your resume and a cover letter to <a href="mailto:careers@fitx.com" style="color: var(--ink);">careers@fitx.com</a>.
+      </p>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

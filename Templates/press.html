@@ -1,0 +1,57 @@
+{% extends "_base.html" %}
+{% block title %}Press - FITX{% endblock %}
+
+{% block head_styles %}
+<style>
+  .page-hero {
+    min-height: 40vh;
+    display: grid;
+    align-items: center;
+    text-align: center;
+    background: #0b0b0b;
+    border-bottom: 1px solid var(--line);
+  }
+  .press-release {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <h1 class="section-title" style="margin-bottom: 0;">FITX IN THE NEWS</h1>
+    <p class="eyebrow">MEDIA & PRESS INQUIRIES</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 900px; margin-inline: auto;">
+    <p style="text-align: center; color: var(--muted); margin-bottom: 3rem;">
+      For all media inquiries, interviews, or collaborations, please contact our press team at <a href="mailto:press@fitx.com" style="color: var(--ink);">press@fitx.com</a>.
+    </p>
+    
+    <h2 class="section-title" style="text-align: center; font-size: 1.5rem;">PRESS RELEASES</h2>
+    
+    <div class="press-release">
+      <span style="color: var(--muted); font-size: 0.9rem;">September 1, 2025</span>
+      <h4 style="margin: 0.5rem 0; font-weight: 600;">FITX Launches New Sustainability Initiative to Promote Circular Fashion</h4>
+      <a href="#" style="color: var(--ink); text-decoration: underline;">Read More</a>
+    </div>
+
+    <div class="press-release">
+      <span style="color: var(--muted); font-size: 0.9rem;">July 22, 2025</span>
+      <h4 style="margin: 0.5rem 0; font-weight: 600;">FITX Announces Partnership with a Leading Sneaker Restoration Service</h4>
+      <a href="#" style="color: var(--ink); text-decoration: underline;">Read More</a>
+    </div>
+    
+    <div class="press-release">
+      <span style="color: var(--muted); font-size: 0.9rem;">May 15, 2025</span>
+      <h4 style="margin: 0.5rem 0; font-weight: 600;">The Grand Opening: FITX Unveils Flagship Store in SoHo</h4>
+      <a href="#" style="color: var(--ink); text-decoration: underline;">Read More</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!-- templates/_footer.html (Modern Mega Footer - UPDATED WITH LINKS) -->
+
+<style>
+    /* --- MODERN MEGA FOOTER STYLES --- */
+    .mega-footer {
+        background-color: #111111;
+        color: #a0a0a0;
+        padding: 4rem 1rem;
+        font-size: 0.9rem;
+        margin-top: auto; /* Pushes footer to the bottom */
+    }
+    .footer-grid-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2.5rem;
+    }
+    .footer-column h5 {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .footer-column ul li {
+        margin-bottom: 0.75rem;
+    }
+    .footer-column a {
+        text-decoration: none;
+        color: #a0a0a0;
+        transition: color 0.2s ease;
+    }
+    .footer-column a:hover {
+        color: #ffffff;
+    }
+    .footer-socials {
+        display: flex;
+        gap: 1rem;
+    }
+    .footer-socials a {
+        font-size: 1.5rem;
+    }
+    .footer-subscribe-form {
+        display: flex;
+        border: 1px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .footer-subscribe-form input {
+        flex-grow: 1;
+        border: none;
+        background-color: #222;
+        color: #fff;
+        padding: 0.75rem;
+    }
+    .footer-subscribe-form input:focus {
+        outline: none;
+        background-color: #333;
+    }
+    .footer-subscribe-form button {
+        background-color: #fff;
+        color: #111;
+        border: none;
+        padding: 0 1rem;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .footer-bottom {
+        max-width: 1200px;
+        margin: 3rem auto 0 auto;
+        padding-top: 2rem;
+        border-top: 1px solid #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .payment-icons {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    .payment-icons img {
+        height: 40px;
+    
+    }
+</style>
+
+<footer class="mega-footer">
+    <div class="footer-grid-container">
+        <!-- Column 1: Support -->
+      <!-- Column 1: Support (LINKS UPDATED) -->
+<div class="footer-column">
+    <h5>Support</h5>
+    <ul>
+        <li><a href="{{ url_for('contact_page') }}">Contact Us</a></li>
+        <li><a href="{{ url_for('faq_page') }}">FAQ</a></li>
+        <li><a href="#">Shipping & Returns</a></li>
+        <li><a href="{{ url_for('account_page') }}">Order Status</a></li>
+        <li><a href="#">Store Locator</a></li>
+    </ul>
+</div>
+        
+        <!-- Column 2: About (LINKS UPDATED HERE) -->
+        <div class="footer-column">
+            <h5>About FITX</h5>
+            <ul>
+                <li><a href="{{ url_for('our_story_page') }}">Our Story</a></li>
+                <li><a href="{{ url_for('careers_page') }}">Careers</a></li>
+                <li><a href="{{ url_for('press_page') }}">Press</a></li>
+                <li><a href="{{ url_for('sustainability_page') }}">Sustainability</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 3: Follow Us -->
+        <div class="footer-column">
+            <h5>Follow Us</h5>
+            <div class="footer-socials">
+                <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" title="YouTube"><i class="bi bi-youtube"></i></a>
+            </div>
+        </div>
+
+        <!-- Column 4: Newsletter -->
+        <div class="footer-column">
+            <h5>Stay In The Loop</h5>
+            <p>Join our mailing list to get the latest on new releases, promotions, and more.</p>
+            <form class="footer-subscribe-form">
+                <input type="email" placeholder="Your email address">
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Bar: Copyright & Payments -->
+    <div class="footer-bottom">
+        <div>
+            &copy; {{ current_year }} FITX. All Rights Reserved.
+        </div>
+        <div class="payment-icons">
+            <!-- Replace with your actual payment icons -->
+            <img src="static/assets/images/icons8-visa-48.png" alt="Visa">
+            <img src="static/assets/images/icons8-american-express-card-48.png" alt="Mastercard">
+            <img src="static/assets/images/icons8-google-pay-new-48.png" alt="American Express">
+            <img src="static/assets/images/icons8-paypal-48.png" alt="PayPal">
+            <img src="static/assets/images/icons8-phone-pe-48.png" alt="PayPal">
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,40 @@
+<!-- templates/login.html (Corrected) -->
+
+{% extends "_base.html" %}
+
+{% block title %}Sign In - ALPHA{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg" style="width: 25rem; border-radius: 1rem;">
+        <div class="card-body p-5">
+            <h2 class="card-title text-center mb-4">Sign In</h2>
+            
+            <!-- This section is for showing error messages like "Invalid Password" -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- The form action MUST point to 'login_page' -->
+            <form action="{{ url_for('login_page') }}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-dark w-100 py-2">Login</button>
+            </form>
+            <div class="text-center mt-3">
+                <p class="text-muted">Don't have an account? <a href="{{ url_for('signup_page') }}">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
