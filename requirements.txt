@@ -13,4 +13,4 @@ Flask
 gunicorn
 psycopg2-binary
 python-dotenv
-python'create_db.py'
+python create_db.py
