@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 
 # --- Configuration ---
 DB_FILE = 'products.db'
-IMAGE_FOLDER_PATH = '/static/assets/products/'
+IMAGE_FOLDER_PATH = 'assets/products/'
 IMAGE_EXTENSION = 'jpeg'
 
 # --- Main Script ---
