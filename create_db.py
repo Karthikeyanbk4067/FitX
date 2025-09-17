@@ -1,78 +1,18 @@
-# create_db.py (FINAL VERSION with Wishlist table and 50 products)
+# create_db.py (Modified to use psycopg2 for PostgreSQL)
 
-import sqlite3
 import os
-from werkzeug.security import generate_password_hash
+from app import get_db_connection # Import the new connection function from your modified app.py
+import psycopg2
 
-# --- Configuration ---
-DB_FILE = 'products.db'
+# --- Configuration (No changes here) ---
 IMAGE_FOLDER_PATH = 'assets/products/'
 IMAGE_EXTENSION = 'jpeg'
 
-# --- Main Script ---
-if os.path.exists(DB_FILE):
-    os.remove(DB_FILE)
-    print(f"Removed old database file: {DB_FILE}")
-
-conn = sqlite3.connect(DB_FILE)
-c = conn.cursor()
-print(f"Successfully connected to new database: {DB_FILE}")
-
-# --- Create All Tables ---
-c.execute('''
-CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY, name TEXT, category TEXT, price REAL, mrp REAL,
-    description TEXT, style_code TEXT, origin TEXT, image_main TEXT, image_thumb1 TEXT,
-    image_thumb2 TEXT, image_thumb3 TEXT, image_thumb4 TEXT, image_thumb5 TEXT,
-    badge TEXT, colors_available INTEGER
-)
-''')
-c.execute('''
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL
-)
-''')
-c.execute('''
-CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, order_date TEXT NOT NULL,
-    total_amount REAL NOT NULL, status TEXT NOT NULL, customer_name TEXT NOT NULL,
-    shipping_address TEXT NOT NULL, city TEXT NOT NULL, postal_code TEXT NOT NULL,
-    payment_method TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (id)
-)
-''')
-c.execute('''
-CREATE TABLE IF NOT EXISTS order_items (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL, product_id INTEGER NOT NULL,
-    product_name TEXT NOT NULL, product_price REAL NOT NULL, quantity INTEGER NOT NULL,
-    size TEXT, image TEXT, FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (product_id) REFERENCES products (id)
-)
-''')
-
-# ===================================================================
-# === THIS IS THE MISSING PIECE THAT FIXES THE ERROR ===
-# ===================================================================
-c.execute('''
-CREATE TABLE IF NOT EXISTS wishlist (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    product_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (product_id) REFERENCES products (id),
-    UNIQUE (user_id, product_id)
-);
-''')
-# ===================================================================
-
-print("All tables created successfully.")
-
-# --- Definitive List of 50 Unique Products ---
-# (Your existing product data remains unchanged)
+# --- Definitive List of 50 Unique Products (No changes here) ---
 products_data = [
     {"id": 1, "name": "Alpha Sprint Lite", "category": "Men", "price": 6800, "mrp": 8000, "description": "Lightweight and agile, perfect for sprints.", "badge": "New Arrival"},
     {"id": 2, "name": "Aura Flex Walker", "category": "Women", "price": 7200, "mrp": 8500, "description": "Maximum flexibility for a natural walking experience.", "badge": None},
     {"id": 3, "name": "Element Street Canvas", "category": "Unisex", "price": 7800, "mrp": 9200, "description": "A classic canvas sneaker for timeless street style.", "badge": "Bestseller"},
-    # ... (Include all 50 product dictionaries here) ...
     {"id": 4, "name": "Terra Glide", "category": "Men", "price": 7950, "mrp": 9500, "description": "A versatile trainer for both gym workouts and light jogs.", "badge": None},
     {"id": 5, "name": "Nova Casual", "category": "Women", "price": 6900, "mrp": 8100, "description": "The perfect blend of comfort and casual elegance.", "badge": None},
     {"id": 6, "name": "Classic Court", "category": "Unisex", "price": 7400, "mrp": 8800, "description": "Inspired by vintage tennis shoes, offering a clean look.", "badge": None},
@@ -123,26 +63,142 @@ products_data = [
 ]
 
 
-# --- Convert and Insert Data ---
-products_to_add = []
-for p in products_data:
-    product_tuple = (
-        p.get("id"), p.get("name"), p.get("category"), p.get("price"),
-        p.get("mrp"), p.get("description"), f'ALPHA-{p.get("id"):03d}', 'Vietnam',
-        f'{IMAGE_FOLDER_PATH}{p.get("id")}.{IMAGE_EXTENSION}', f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb1.{IMAGE_EXTENSION}',
-        f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb2.{IMAGE_EXTENSION}', f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb3.{IMAGE_EXTENSION}',
-        f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb4.{IMAGE_EXTENSION}', f'{IMAGE_FOLDER_PATH}{p.get("id")}.{IMAGE_EXTENSION}',
-        p.get("badge"), p.get("colors_available", 1)
-    )
-    products_to_add.append(product_tuple)
+def setup_database():
+    """
+    Drops all tables, recreates them using raw SQL, and populates the 'products' table.
+    This is DESTRUCTIVE and will reset your database.
+    """
+    conn = None
+    try:
+        print("Connecting to the database...")
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            # --- Drop existing tables in reverse order of creation due to foreign keys ---
+            print("Dropping all database tables...")
+            cur.execute("DROP TABLE IF EXISTS wishlist, order_items, orders, users, products CASCADE;")
 
-c.executemany('''
-    INSERT INTO products (id, name, category, price, mrp, description, style_code, origin, 
-    image_main, image_thumb1, image_thumb2, image_thumb3, image_thumb4, image_thumb5, badge, colors_available) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-''', products_to_add)
-print(f"Inserted {len(products_to_add)} unique products into the database.")
+            # --- Create all tables with proper schemas and constraints ---
+            print("Creating all database tables...")
 
-conn.commit()
-conn.close()
-print("Database creation and population complete.")
+            # Users Table
+            cur.execute('''
+                CREATE TABLE users (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(100) UNIQUE NOT NULL,
+                    password_hash VARCHAR(255) NOT NULL
+                );
+            ''')
+
+            # Products Table
+            cur.execute('''
+                CREATE TABLE products (
+                    id INT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    category VARCHAR(50),
+                    price NUMERIC(10, 2) NOT NULL,
+                    mrp NUMERIC(10, 2),
+                    description TEXT,
+                    style_code VARCHAR(50),
+                    origin VARCHAR(100),
+                    image_main VARCHAR(255),
+                    image_thumb1 VARCHAR(255),
+                    image_thumb2 VARCHAR(255),
+                    image_thumb3 VARCHAR(255),
+                    image_thumb4 VARCHAR(255),
+                    badge VARCHAR(50),
+                    colors_available INT DEFAULT 1
+                );
+            ''')
+
+            # Orders Table
+            cur.execute('''
+                CREATE TABLE orders (
+                    id SERIAL PRIMARY KEY,
+                    user_id INT REFERENCES users(id),
+                    order_date TIMESTAMP NOT NULL,
+                    total_amount NUMERIC(10, 2),
+                    status VARCHAR(50),
+                    customer_name VARCHAR(255),
+                    shipping_address TEXT,
+                    city VARCHAR(100),
+                    postal_code VARCHAR(20),
+                    payment_method VARCHAR(50)
+                );
+            ''')
+
+            # Order Items Table
+            cur.execute('''
+                CREATE TABLE order_items (
+                    id SERIAL PRIMARY KEY,
+                    order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+                    product_id INT REFERENCES products(id),
+                    product_name VARCHAR(255),
+                    product_price NUMERIC(10, 2),
+                    quantity INT,
+                    size VARCHAR(50),
+                    image VARCHAR(255)
+                );
+            ''')
+
+            # Wishlist Table
+            cur.execute('''
+                CREATE TABLE wishlist (
+                    id SERIAL PRIMARY KEY,
+                    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+                    product_id INT REFERENCES products(id) ON DELETE CASCADE,
+                    UNIQUE (user_id, product_id)
+                );
+            ''')
+            print("All tables created successfully.")
+
+            # --- Seed the products table using the data list ---
+            print("Seeding the products table...")
+            insert_query = """
+                INSERT INTO products (
+                    id, name, category, price, mrp, description, style_code,
+                    origin, image_main, image_thumb1, image_thumb2, image_thumb3,
+                    image_thumb4, badge, colors_available
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                );
+            """
+            for p in products_data:
+                product_tuple = (
+                    p.get("id"),
+                    p.get("name"),
+                    p.get("category"),
+                    p.get("price"),
+                    p.get("mrp"),
+                    p.get("description"),
+                    f'ALPHA-{p.get("id"):03d}',
+                    'Vietnam',
+                    f'{IMAGE_FOLDER_PATH}{p.get("id")}.{IMAGE_EXTENSION}',
+                    f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb1.{IMAGE_EXTENSION}',
+                    f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb2.{IMAGE_EXTENSION}',
+                    f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb3.{IMAGE_EXTENSION}',
+                    f'{IMAGE_FOLDER_PATH}{p.get("id")}-thumb4.{IMAGE_EXTENSION}',
+                    p.get("badge"),
+                    p.get("colors_available", 1)
+                )
+                cur.execute(insert_query, product_tuple)
+            
+            print(f"Inserted {len(products_data)} products into the database.")
+
+            # Commit all changes to the database
+            conn.commit()
+            print("Database seeding and population complete.")
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(f"Error during database setup: {error}")
+        if conn:
+            conn.rollback() # Roll back any partial changes
+    finally:
+        if conn:
+            conn.close()
+            print("Database connection closed.")
+
+
+# This allows you to run 'python create_db.py' from your terminal
+if __name__ == '__main__':
+    setup_database()
+    
