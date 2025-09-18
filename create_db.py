@@ -5,7 +5,7 @@ from app import get_db_connection # Import the new connection function from your
 import psycopg2
 
 # --- Configuration (No changes here) ---
-IMAGE_FOLDER_PATH = 'assets/products/'
+IMAGE_FOLDER_PATH = 'assets/Products/'
 IMAGE_EXTENSION = 'jpeg'
 
 # --- Definitive List of 50 Unique Products (No changes here) ---
