@@ -13,3 +13,4 @@ Flask
 gunicorn
 psycopg2-binary
 python-dotenv
+whitenoise==6.7.0 # <--- ADD THIS LINE

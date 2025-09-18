@@ -12,13 +12,18 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import threading # Ensure threading is imported for background tasks
- 
+from whitenoise import WhiteNoise # <--- 1. IMPORT WHITENOISE HERE
+
 # Load environment variables once at the top
 load_dotenv()
  
 # --- App Initialization ---
 app = Flask(__name__)
- 
+
+# --- 2. ADD THIS LINE AFTER APP INITIALIZATION ---
+# This tells WhiteNoise to look for a 'static' folder and serve its contents
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+
 # IMPORTANT FIX: Use a *separate* secret key for Flask sessions.
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_super_secret_fallback_key_CHANGE_THIS_IN_PROD')
  
