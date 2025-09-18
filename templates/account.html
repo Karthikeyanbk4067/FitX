@@ -153,7 +153,8 @@
                             <!-- CORRECTED: Access data via order.details -->
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ order.details.id }}">
                                 <div class="w-100 order-details-grid">
-                                    <div><strong>Order Date:</strong><br>{{ order.details.order_date.split(' ')[0] }}</div>
+                                    <!-- templates/account.html (Corrected) -->
+                                    <div><strong>Order Date:</strong><br>{{ order.details.order_date.strftime('%Y-%m-%d') }}</div>
                                     <div><strong>Total:</strong><br>₹{{ "%.2f"|format(order.details.total_amount) }}</div>
                                     <div><strong>Order #:</strong><br>ALPHA-{{ order.details.id }}</div>
                                 </div>
