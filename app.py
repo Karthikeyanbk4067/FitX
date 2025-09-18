@@ -12,7 +12,10 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import threading # Ensure threading is imported for background tasks
-from whitenoise import WhiteNoise # <--- 1. IMPORT WHITENOISE HERE
+# app.py (MODIFIED)
+
+# ... (all your imports should be at the top)
+from whitenoise import WhiteNoise
 
 # Load environment variables once at the top
 load_dotenv()
@@ -20,13 +23,14 @@ load_dotenv()
 # --- App Initialization ---
 app = Flask(__name__)
 
-# --- 2. ADD THIS LINE AFTER APP INITIALIZATION ---
-# This tells WhiteNoise to look for a 'static' folder and serve its contents
-app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+# THIS IS THE ONLY WHITENOISE CONFIGURATION LINE YOU SHOULD HAVE
+# It explicitly maps the /static/ URL to the static/ directory.
+app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
 
 # IMPORTANT FIX: Use a *separate* secret key for Flask sessions.
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_super_secret_fallback_key_CHANGE_THIS_IN_PROD')
- 
+
+# ... (the rest of your app.py file continues as normal)
 # Configure Gemini API
 api_key = os.environ.get('GEMINI_API_KEY')
 if not api_key:
