@@ -321,7 +321,7 @@ def add_to_cart():
             cart[cart_key] = {
                 'id': product['id'],
                 'name': product['name'],
-                'price': product['price'],
+                'price': float(product['price']),
                 'image': product['image_main'],
                 'quantity': 1,
                 'size': selected_size
