@@ -566,6 +566,4 @@ def remove_from_wishlist():
             flash(f'Error removing from wishlist: {e}', 'danger')
     return redirect(url_for('wishlist'))
  
-if __name__ == '__main__':
-    app.run(debug=True)
-    
+
