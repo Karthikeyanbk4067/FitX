@@ -23,9 +23,12 @@ load_dotenv()
 # --- App Initialization ---
 app = Flask(__name__)
 
-# THIS IS THE ONLY WHITENOISE CONFIGURATION LINE YOU SHOULD HAVE
-# It explicitly maps the /static/ URL to the static/ directory.
-app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
+# --- FINAL, ROBUST WHITENOISE CONFIGURATION ---
+# Construct the absolute path to the 'static' directory
+static_folder_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+# Configure WhiteNoise with the absolute path and the correct prefix
+app.wsgi_app = WhiteNoise(app.wsgi_app, root=static_folder_root, prefix="static/")
+# -------------------------------------------
 
 # IMPORTANT FIX: Use a *separate* secret key for Flask sessions.
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_super_secret_fallback_key_CHANGE_THIS_IN_PROD')
