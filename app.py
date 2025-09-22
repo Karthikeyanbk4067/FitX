@@ -419,105 +419,193 @@ def checkout_success():
  
 # --- CHATBOT SECTION (with DB logic updated) ---
  
-def get_product_summary():
-    conn = get_db_connection()
-    # --- MODIFIED: Use psycopg2 cursor ---
+# ===================================================================
+# START: UPGRADED CHATBOT LOGIC (DATABASE-CONNECTED & AI-POWERED)
+# ===================================================================
+
+import re # Make sure 're' is imported at the top of your app.py file
+
+# --- TOOL 1: DATABASE FUNCTION FOR PRODUCT SEARCHES ---
+def search_products_db(query: str = None, min_price: float = None, max_price: float = None):
+    """
+    Searches the database for products. Can filter by a search query (name/category),
+    a minimum price, a maximum price, or any combination of these.
+    This is a tool for the AI chatbot.
+    """
+    conn = get_db_connection() # Connects to your Render PostgreSQL database
+    
+    # Start building the SQL query dynamically and safely
+    base_query = "SELECT name, price, category, description FROM products"
+    conditions = []
+    params = []
+
+    if query:
+        conditions.append("(name ILIKE %s OR category ILIKE %s)")
+        params.extend([f"%{query}%", f"%{query}%"])
+    
+    if min_price is not None:
+        conditions.append("price >= %s")
+        params.append(min_price)
+        
+    if max_price is not None:
+        conditions.append("price <= %s")
+        params.append(max_price)
+
+    # Combine conditions if any exist
+    if conditions:
+        base_query += " WHERE " + " AND ".join(conditions)
+    
+    base_query += " LIMIT 5" # Always limit results to avoid overwhelming the AI
+
+    # Execute the query against the live database
     with conn.cursor(cursor_factory=DictCursor) as cur:
-        cur.execute("SELECT name, category, price, description, badge, image_main FROM products")
+        cur.execute(base_query, params)
         products = cur.fetchall()
     conn.close()
- 
-    summary_lines = []
-    for p in products:
-        badge_info = f" (Badge: {p['badge']})" if p['badge'] else ""
-        summary_lines.append(f"- Name: {p['name']}{badge_info}, Category: {p['category']}, Price: ₹{p['price']:.2f}, Description: {p['description']}, Image: {p['image_main']}")
-   
-    return "\n".join(summary_lines)
 
-# The rest of the chatbot logic does not directly use the database connection object,
-# but relies on helper functions like get_orders_for_user and get_product_summary,
-# which have already been updated. So, no further changes are needed in the chatbot routes themselves.
-# The original file's chatbot routes are maintained below.
+    if not products:
+        # Provide a more helpful "not found" message
+        search_term = f"matching '{query}'" if query else ""
+        price_term = ""
+        if min_price is not None and max_price is not None:
+            price_term = f"between ₹{min_price} and ₹{max_price}"
+        elif max_price is not None:
+            price_term = f"under ₹{max_price}"
+        elif min_price is not None:
+            price_term = f"over ₹{min_price}"
+        
+        return f"I couldn't find any products {search_term} {price_term}. Please try different criteria."
+
+    # Format the results into a clean string for the AI to understand
+    results_string = "I found these products:\n"
+    for p in products:
+        results_string += f"- Name: {p['name']}, Category: {p['category']}, Price: ₹{float(p['price']):.2f}\n"
+    return results_string
+
+# --- TOOL 2: DATABASE FUNCTION FOR ORDER STATUS ---
+def get_order_status_db(order_id: int, user_id: int):
+    """
+    Gets the status and details of a specific order for a given user from the Render database.
+    This is a tool for the AI chatbot.
+    """
+    conn = get_db_connection() # Connects to your Render PostgreSQL database
+    with conn.cursor(cursor_factory=DictCursor) as cur:
+        cur.execute("SELECT id, status, order_date, total_amount FROM orders WHERE id = %s AND user_id = %s", (order_id, user_id))
+        order = cur.fetchone()
+    conn.close()
+
+    if not order:
+        return f"I couldn't find any order with the ID #{order_id} for this user. They might have the wrong ID or are not logged in."
+
+    # Format the result into a clean string for the AI to understand
+    return f"Order #{order['id']} Status: {order['status']}, Order Date: {order['order_date'].strftime('%Y-%m-%d')}, Total: ₹{float(order['total_amount']):.2f}."
+
+# --- FALLBACK: SIMPLE RULE-BASED CHAT ---
 def rule_based_chat(message, user):
-    import re
+    """Handles simple, fixed questions for a fast, free response."""
     message = message.lower().strip()
-    if "hello" in message or "hi" in message: return "Hello! 👋 How can I help you today?"
+    if "hello" in message or "hi" in message: return "Hello! 👋 I'm the FITX Bot. How can I help you with our footwear today?"
     if "shipping" in message: return "We provide shipping across India. Delivery usually takes 3–5 working days."
-    if "return" in message or "refund" in message: return "We accept returns within 7 days of delivery. Please keep the shoes unused and in original packaging."
-    if "contact" in message: return "You can reach us via our contact page or email support@alpha.com."
+    if "return" in message or "refund" in message: return "We accept returns within 30 days of delivery for unused items in their original packaging."
+    if "contact" in message: return "You can reach our human team via the 'Contact Us' page on our website."
     return None
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    user_message = request.json.get('message', '')
-    response_text = rule_based_chat(user_message, current_user)
-    if not response_text:
-        try:
-            model = genai.GenerativeModel("gemini-1.5-flash-latest")
-            gemini_response = model.generate_content(f"User: {user_message}")
-            response_text = gemini_response.text if gemini_response else "I'm sorry, I couldn't get a response."
-        except Exception as e:
-            print(f"Gemini API error: {e}")
-            response_text = "Oops! Something went wrong while contacting AI. Please try again later."
-    return jsonify({"response": response_text})
-
+# --- THE "BRAIN": MAIN AI LOGIC WITH TOOL-USING CAPABILITIES ---
 def process_chat_message(message, user):
-    product_data = get_product_summary()
-    order_data = "User is not logged in."
-    if user.is_authenticated:
-        orders = get_orders_for_user(user.id)
-        if orders:
-            order_data = "Here is the user's recent order history:\n"
-            for order in orders[:3]:
-                details = order['details']
-                order_data += f"- Order ID {details['id']}, Status: {details['status']}, Total: ₹{details['total_amount']:.2f}, Order Date: {details['order_date']}\n"
-        else:
-            order_data = "The user has no past orders."
-    prompt = f"""
-You are FITX Bot... [rest of prompt is unchanged]
-USER'S QUESTION: "{message}"
-YOUR ANSWER:
+    """
+    Processes a user's message using the Gemini API, decides if a database tool is needed,
+    executes it against the Render DB, and then generates a final natural language response.
+    """
+    system_prompt = f"""
+You are FITX Bot, a helpful and friendly e-commerce assistant for a shoe store.
+Your goal is to answer the user's question about the store's products and their orders.
+
+Today's Date: {datetime.now().strftime('%Y-%m-%d')}
+
+TOOLS AVAILABLE:
+1. search_products(query: str = None, min_price: float = None, max_price: float = None): Use this to search for products. You can search by a text query, a price range, or both. For example, to find shoes under 10000, call it with max_price=10000. To find 'running shoes' over 8000, call it with query='running shoes' and min_price=8000.
+2. get_order_status(order_id: int): Use this to get the status of a specific order for a logged-in user.
+
+USER CONTEXT:
+- The user is {'LOGGED IN as user_id ' + str(user.id) if user.is_authenticated else 'NOT LOGGED IN'}.
+
+INSTRUCTIONS:
+1. **CRITICAL RULE:** Your ONLY purpose is to assist with the FITX shoe store. If the user asks any question that is NOT about our products, their orders, shipping, or store policies (e.g., asking for jokes, math problems, general knowledge, other companies), you MUST politely refuse. A perfect refusal is: "I'm the FITX Bot, and my expertise is limited to our products and your orders. How can I help you with our footwear today?"
+2. Analyze the user's question to see if it's related to our store.
+3. If you need to look up product information (like price or availability), respond ONLY with: [TOOL_CALL] search_products(...)
+4. If you need to look up an order status, respond ONLY with: [TOOL_CALL] get_order_status(...)
+5. If the question is simple and on-topic (e.g., "What are your return policies?"), you can answer it directly.
+6. If you call a tool, I will provide the result, and you must then formulate a final, friendly answer to the user based on that information.
 """
+
+    initial_prompt = f"{system_prompt}\nUser's Question: \"{message}\"\n\nYour Response:"
+    
     try:
-        model = genai.GenerativeModel('models/gemini-1.5-flash-latest')
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        model = genai.GenerativeModel("gemini-1.5-flash-latest")
+        initial_response = model.generate_content(initial_prompt)
+        ai_decision = initial_response.text.strip()
+
+        if ai_decision.startswith("[TOOL_CALL]"):
+            print(f"AI decided to call a tool: {ai_decision}")
+            tool_result = ""
+            
+            tool_match = re.search(r'search_products\((.*?)\)', ai_decision)
+            order_match = re.search(r'get_order_status\(order_id=(\d+)\)', ai_decision)
+
+            if tool_match:
+                args_str = tool_match.group(1)
+                query_arg = re.search(r'query="([^"]+)"', args_str)
+                min_price_arg = re.search(r'min_price=([\d\.]+)', args_str)
+                max_price_arg = re.search(r'max_price=([\d\.]+)', args_str)
+                
+                query = query_arg.group(1) if query_arg else None
+                min_price = float(min_price_arg.group(1)) if min_price_arg else None
+                max_price = float(max_price_arg.group(1)) if max_price_arg else None
+                
+                tool_result = search_products_db(query=query, min_price=min_price, max_price=max_price)
+                
+            elif order_match:
+                if not user.is_authenticated:
+                    return "You need to be logged in for me to check your order status."
+                order_id = int(order_match.group(1))
+                tool_result = get_order_status_db(order_id=order_id, user_id=user.id)
+            else:
+                tool_result = "An error occurred trying to use that tool."
+
+            final_prompt = f"{system_prompt}\nUser's Question: \"{message}\"\nYou decided to call a tool. Here is the result from the database:\n[TOOL_RESULT]\n{tool_result}\n\nNow, please provide a final, friendly, and natural-sounding answer to the user based on this information."
+            final_response = model.generate_content(final_prompt)
+            return final_response.text.strip()
+        else:
+            return ai_decision
+
     except Exception as e:
         print(f"Gemini API Error in process_chat_message: {e}")
-        return rule_based_chat(message, user)
+        return rule_based_chat(message, user) or "I'm sorry, I had a little trouble processing that. Could you try asking in a different way?"
 
+# --- FLASK ROUTE: THE CHATBOT ENDPOINT ---
 @app.route('/chatbot', methods=['POST'])
 def chatbot_response():
     user_message = request.json.get('message', '').strip()
-    if not user_message: return jsonify({'response': "Please type something."})
+    if not user_message:
+        return jsonify({'response': "Please type something."})
+    
+    # First, try the simple rule-based chat for instant answers
     rule_response = rule_based_chat(user_message, current_user)
-    if rule_response: return jsonify({'response': rule_response})
+    if rule_response:
+        return jsonify({'response': rule_response})
+    
+    # If no rule matches, use the advanced AI logic
     try:
         bot_response = process_chat_message(user_message, current_user)
         if not bot_response: raise ValueError("Empty response from Gemini")
         return jsonify({'response': bot_response})
     except Exception as e:
-        print(f"Gemini API error in /chatbot: {e}")
-        return jsonify({'response': "⚠️ Our AI assistant is currently busy. Please try again later."})
- 
-# --- Search Route (with DB logic updated) ---
-@app.route('/search')
-def search():
-    query = request.args.get('q', '')
-    conn = get_db_connection()
-    # --- MODIFIED: Use psycopg2 cursor and %s placeholder ---
-    with conn.cursor(cursor_factory=DictCursor) as cur:
-        cur.execute("SELECT * FROM products WHERE name LIKE %s", ('%' + query + '%',))
-        products = cur.fetchall()
-    conn.close()
-    return render_template(
-        'products.html',
-        products=products,
-        cart_item_count=get_cart_count(),
-        current_user=current_user,
-        selected_categories=[],
-        selected_price=None
-    )
+        print(f"Major error in /chatbot route: {e}")
+        return jsonify({'response': "⚠️ Our AI assistant is currently busy. Please try again in a moment."})
+
+# ===================================================================
+# END: UPGRADED CHATBOT LOGIC
+# ===================================================================
  
 # --- WISHLIST ROUTES (with DB logic updated) ---
 @app.route('/wishlist')
