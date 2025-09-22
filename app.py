@@ -606,7 +606,29 @@ def chatbot_response():
 # ===================================================================
 # END: UPGRADED CHATBOT LOGIC
 # ===================================================================
- 
+ # --- Search Route (with DB logic updated) ---
+@app.route('/search')
+def search():
+    query = request.args.get('q', '')
+    if not query:
+        # Redirect to the products page if the search query is empty
+        return redirect(url_for('products_page'))
+        
+    conn = get_db_connection()
+    # --- MODIFIED: Use psycopg2 cursor and %s placeholder ---
+    with conn.cursor(cursor_factory=DictCursor) as cur:
+        # Use ILIKE for case-insensitive searching in PostgreSQL
+        cur.execute("SELECT * FROM products WHERE name ILIKE %s", ('%' + query + '%',))
+        products = cur.fetchall()
+    conn.close()
+    return render_template(
+        'products.html',
+        products=products,
+        cart_item_count=get_cart_count(),
+        current_user=current_user,
+        selected_categories=[],
+        selected_price=None
+    )
 # --- WISHLIST ROUTES (with DB logic updated) ---
 @app.route('/wishlist')
 @login_required
